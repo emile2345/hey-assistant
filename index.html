@@ -8,15 +8,20 @@
 </head>
 <body>
 
-<button id="micBtn">🎤 Activer le micro</button>
-<canvas id="scene"></canvas>
-
-<script src="js/main.js"></script>
-<script src="js/webrtc.js"></script>
-
-    
 <button id="micBtn">🎤 Tester le micro</button>
 <p id="status"></p>
+
+    <script>
+document.getElementById("micBtn").onclick = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    document.getElementById("status").innerText = "✅ Micro actif";
+    stream.getTracks().forEach(t => t.stop());
+  } catch (e) {
+    document.getElementById("status").innerText = "❌ Micro refusé";
+  }
+};
+</script>
 
 
 </body>
