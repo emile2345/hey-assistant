@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>HEY Assistant</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <title>Mic Test</title>
 </head>
-<body>
+<body style="background:#111;color:white;text-align:center;padding-top:40px">
 
-<button id="micBtn">🎤 Tester le micro</button>
+<h2>🎤 Test Micro</h2>
+
+<button id="micBtn">Tester le micro</button>
 <p id="status"></p>
 
-    <script>
+<script>
 document.getElementById("micBtn").onclick = async () => {
+  const status = document.getElementById("status");
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    document.getElementById("status").innerText = "✅ Micro actif";
+    status.innerText = "✅ Micro actif";
     stream.getTracks().forEach(t => t.stop());
   } catch (e) {
-    document.getElementById("status").innerText = "❌ Micro refusé";
+    console.error(e);
+    status.innerText = "❌ Micro refusé : " + e.message;
   }
 };
 </script>
 
 </body>
 </html>
+
