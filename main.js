@@ -51,6 +51,9 @@
   
   loader.load(
     'avatar.glb',
+    
+    console.log('✅ AVATAR DÉCODÉ AVEC SUCCÈS');
+    
     function(gltf) {
       avatar = gltf.scene;
       
