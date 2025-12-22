@@ -39,7 +39,15 @@
 
   // === CHARGEMENT DE L'AVATAR ===
   var avatar = null;
+ 
+  var dracoLoader = new THREE.DRACOLoader();
+  dracoLoader.setDecoderPath(
+    'https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/libs/draco/'
+  );
+  
   var loader = new THREE.GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+
   
   loader.load(
     'avatar.glb',
