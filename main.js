@@ -19,27 +19,17 @@ scene.add(light);
 const ambient = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambient);
 
-// Load avatar
+// Cube pour test
 let avatar = null;
-const loader = new THREE.GLTFLoader();
-loader.load(
-  "avatar.glb",
-  (gltf) => {
-    avatar = gltf.scene;
-    avatar.scale.set(1, 1, 1);
-    avatar.position.set(0, 0, 0);
-    scene.add(avatar);
-  },
-  undefined,
-  (error) => {
-    console.error("GLB load error:", error);
-  }
-);
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
+avatar = new THREE.Mesh(geometry, material);
+scene.add(avatar);
 
 // Animate loop
 function animate() {
   requestAnimationFrame(animate);
-  if (avatar) avatar.rotation.y += 0.002;
+  if (avatar) avatar.rotation.y += 0.01;
   renderer.render(scene, camera);
 }
 animate();
@@ -50,5 +40,6 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 
 
