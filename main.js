@@ -43,7 +43,7 @@ const loader = new GLTFLoader();
 let avatar = null;
 
 loader.load(
-  './avatar.glb',
+  'avatar.glb',
   (gltf) => {
     avatar = gltf.scene;
 
