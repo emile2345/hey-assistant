@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Hey Assistant</title>
+  <meta charset="UTF-8" />
+  <title>HEY Assistant – Test Cube</title>
+
   <style>
-    * { margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-    #scene { display: block; width: 100%; height: 100%; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
-  <canvas id="scene"></canvas>
-  
-  <!-- Three.js r148 (global script, pas module) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
-  <!-- GLTFLoader r148 (prêt pour avatar.glb) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/loaders/DRACOLoader.js"></script>
 
-  
-  <script src="main.js"></script>
+<canvas id="scene"></canvas>
+
+<!-- THREE GLOBAL (PAS MODULE) -->
+<script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
+
+<!-- TON SCRIPT -->
+<script src="main.js"></script>
+
 </body>
 </html>
+
 
 
