@@ -8,7 +8,7 @@ const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerH
 camera.position.set(0, 1.4, 2.5);
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Lights
@@ -23,7 +23,7 @@ scene.add(ambient);
 let avatar = null;
 const loader = new THREE.GLTFLoader();
 loader.load(
-  "avatar.glb", // fichier dans le même dossier que index.html
+  "avatar.glb",
   (gltf) => {
     avatar = gltf.scene;
     avatar.scale.set(1, 1, 1);
@@ -50,4 +50,5 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 
