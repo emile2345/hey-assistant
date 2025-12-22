@@ -20,19 +20,7 @@ const ambient = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambient);
 
 // Cube pour test
-let avatar = null;
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
-avatar = new THREE.Mesh(geometry, material);
-scene.add(avatar);
-
-// Animate loop
-function animate() {
-  requestAnimationFrame(animate);
-  if (avatar) avatar.rotation.y += 0.01;
-  renderer.render(scene, camera);
-}
-animate();
+const loader = new THREE.GLTFLoader();
 
 // Handle resize
 window.addEventListener("resize", () => {
