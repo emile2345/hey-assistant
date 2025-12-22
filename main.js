@@ -1,63 +1,86 @@
 // ============================================
-// Hey Assistant - Three.js ES Module
-// Compatible GitHub Pages
+// HEY Assistant — Avatar GLB (stable)
+// Three.js ES Modules — Lovable compatible
 // ============================================
 
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/loaders/GLTFLoader.js';
 
-// === INITIALISATION ===
 const canvas = document.getElementById('scene');
+
+// === SCENE ===
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
-// === CAMÉRA ===
+// === CAMERA ===
 const camera = new THREE.PerspectiveCamera(
-  75,
+  45,
   window.innerWidth / window.innerHeight,
   0.1,
   100
 );
-camera.position.z = 3;
+camera.position.set(0, 1.6, 3);
 
 // === RENDERER ===
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
-  antialias: true
+  canvas,
+  antialias: false,
+  powerPreference: 'low-power',
+  alpha: true
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// === ÉCLAIRAGE ===
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
+// === LIGHTS ===
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(1, 1, 1);
-scene.add(directionalLight);
+const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(1, 2, 3);
+scene.add(dirLight);
 
-// === CUBE TURQUOISE ===
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshStandardMaterial({ color: 0x40E0D0 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+// === LOAD AVATAR ===
+const loader = new GLTFLoader();
+let avatar = null;
+
+loader.load(
+  './avatar.glb',
+  (gltf) => {
+    avatar = gltf.scene;
+
+    // 🔧 Position & scale (CENTRÉ)
+    avatar.position.set(0, 0, 0);
+    avatar.scale.set(1, 1, 1);
+
+    scene.add(avatar);
+    console.log('✅ Avatar chargé et affiché');
+  },
+  (xhr) => {
+    console.log(`⏳ Chargement ${(xhr.loaded / xhr.total * 100).toFixed(1)}%`);
+  },
+  (error) => {
+    console.error('❌ Erreur avatar.glb', error);
+  }
+);
 
 // === ANIMATION LOOP ===
 function animate() {
   requestAnimationFrame(animate);
-  
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  
+
+  if (avatar) {
+    avatar.rotation.y += 0.005;
+  }
+
   renderer.render(scene, camera);
 }
 animate();
 
-// === GESTION DU RESIZE ===
+// === RESIZE ===
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 
 
 
