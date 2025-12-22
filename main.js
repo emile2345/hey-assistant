@@ -37,19 +37,50 @@
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
 
-  // === CUBE DE TEST (turquoise) ===
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshStandardMaterial({ color: 0x40E0D0 });
-  var cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  // === CHARGEMENT DE L'AVATAR ===
+  var avatar = null;
+  var loader = new THREE.GLTFLoader();
+  
+  loader.load(
+    'avatar.glb',
+    function(gltf) {
+      avatar = gltf.scene;
+      
+      // === AJUSTER POSITION ===
+      // avatar.position.set(x, y, z)
+      // x: gauche(-) / droite(+)
+      // y: bas(-) / haut(+)
+      // z: loin(-) / proche(+)
+      avatar.position.set(0, -1, 0);  // Centré, légèrement en bas
+      
+      // === AJUSTER ÉCHELLE ===
+      // avatar.scale.set(x, y, z) - valeurs identiques = uniforme
+      avatar.scale.set(1, 1, 1);  // Taille normale
+      // avatar.scale.set(0.5, 0.5, 0.5);  // 50% de la taille
+      // avatar.scale.set(2, 2, 2);  // 200% de la taille
+      
+      // === AJUSTER ROTATION (optionnel) ===
+      // avatar.rotation.y = Math.PI;  // Tourner de 180°
+      
+      scene.add(avatar);
+      console.log('Avatar chargé avec succès !');
+    },
+    function(xhr) {
+      console.log((xhr.loaded / xhr.total * 100) + '% chargé');
+    },
+    function(error) {
+      console.error('Erreur chargement avatar:', error);
+    }
+  );
 
   // === ANIMATION LOOP ===
   function animate() {
     requestAnimationFrame(animate);
     
-    // Rotation du cube
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    // Rotation douce de l'avatar (optionnel)
+    if (avatar) {
+      avatar.rotation.y += 0.005;
+    }
     
     renderer.render(scene, camera);
   }
@@ -62,41 +93,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // ============================================
-  // POUR CHARGER AVATAR.GLB (décommenter plus tard)
-  // ============================================
-  /*
-  var loader = new THREE.GLTFLoader();
-  
-  loader.load(
-    'avatar.glb',
-    function(gltf) {
-      // Succès : ajouter le modèle à la scène
-      var avatar = gltf.scene;
-      scene.add(avatar);
-      
-      // Optionnel : ajuster position/échelle
-      // avatar.position.set(0, 0, 0);
-      // avatar.scale.set(1, 1, 1);
-      
-      // Supprimer le cube de test
-      scene.remove(cube);
-      geometry.dispose();
-      material.dispose();
-      
-      console.log('Avatar chargé avec succès !');
-    },
-    function(xhr) {
-      // Progression du chargement
-      console.log((xhr.loaded / xhr.total * 100) + '% chargé');
-    },
-    function(error) {
-      // Erreur
-      console.error('Erreur chargement avatar:', error);
-    }
-  );
-  */
-
 })();
+
 
 
