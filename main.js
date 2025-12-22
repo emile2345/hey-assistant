@@ -4,83 +4,26 @@ const canvas = document.getElementById("scene");
 const scene = new THREE.Scene();
 
 // Camera
-const camera = new THREE.PerspectiveCamera(
-
-    35,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-
-  35,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  100
-
-);
+const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 1.4, 2.5);
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({
-
-    canvas,
-    antialias: true,
-    alpha: true
-
-  canvas,
-  antialias: true,
-  alpha: true
-
-});
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-
+// Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(2, 5, 2);
 scene.add(light);
-
 
 const ambient = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambient);
 
 // Load avatar
-const loader = new THREE.GLTFLoader();
-loader.load(
-    "models/avatar.glb",
-    (gltf) => {
-        const avatar = gltf.scene;
-        avatar.scale.set(1, 1, 1);
-        avatar.position.set(0, 0, 0);
-        scene.add(avatar);
-
-        // Simple rotation to prove it's alive
-        function animate() {
-            requestAnimationFrame(animate);
-            avatar.rotation.y += 0.002;
-            renderer.render(scene, camera);
-        }
-        animate();
-    },
-    undefined,
-    (error) => {
-        console.error("Avatar load error", error);
-    }
-);
-
-// Resize
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-
-// Load avatar
-const loader = new THREE.GLTFLoader();
 let avatar = null;
-
+const loader = new THREE.GLTFLoader();
 loader.load(
-  "avatar.glb",
+  "avatar.glb", // fichier dans le même dossier que index.html
   (gltf) => {
     avatar = gltf.scene;
     avatar.scale.set(1, 1, 1);
@@ -93,19 +36,18 @@ loader.load(
   }
 );
 
-// Animation loop
+// Animate loop
 function animate() {
   requestAnimationFrame(animate);
-  if (avatar) {
-    avatar.rotation.y += 0.002;
-  }
+  if (avatar) avatar.rotation.y += 0.002;
   renderer.render(scene, camera);
 }
 animate();
 
-// Resize
+// Handle resize
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
