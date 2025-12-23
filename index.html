@@ -10,16 +10,30 @@
             padding: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
+            background: #cccccc;
         }
 
         #info {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            max-width: 300px;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
         canvas {
@@ -28,7 +42,16 @@
     </style>
 </head>
 <body>
-    <div id="info">✅ Avatar 3D Ready Player Me<br>Fond gris clair visible</div>
+    <div id="info">
+        <strong>✅ Ready Player Me Avatar 3D</strong><br>
+        Fond gris clair visible<br>
+        <span id="status">Chargement de l'avatar...</span>
+    </div>
+
+    <div id="loading" style="display: none;">
+        Chargement de l'avatar 3D...
+    </div>
+
     <script type="module" src="./main.js"></script>
 </body>
 </html>
