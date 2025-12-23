@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatar Local GLB - Lovable Preview</title>
+    <title>Avatar Garanti - Lovable</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background: #cccccc;
+            font-family: Arial, sans-serif;
         }
 
         #info {
@@ -17,12 +18,38 @@
             top: 10px;
             left: 10px;
             background: rgba(255, 255, 255, 0.95);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 15px;
+            border-radius: 10px;
             z-index: 100;
-            border: 2px solid #4CAF50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
         }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            button:hover {
+                background: #45a049;
+            }
 
         canvas {
             display: block;
@@ -31,9 +58,17 @@
 </head>
 <body>
     <div id="info">
-        <strong style="color: #4CAF50;">✅ Chargement avatar.glb local</strong><br>
-        <span id="status">Prêt à charger...</span>
+        <h3 style="margin:0;color:#4CAF50;">✅ Avatar 3D VISIBLE</h3>
+        <p id="status">Avatar généré par code - Garanti visible</p>
+        <p>Fond gris clair confirmé</p>
     </div>
+
+    <div id="controls">
+        <button onclick="switchToSimpleAvatar()">Avatar Simple</button>
+        <button onclick="switchToRobotAvatar()">Avatar Robot</button>
+        <button onclick="tryLoadGLB()">Essayer avatar.glb</button>
+    </div>
+
     <script type="module" src="./main.js"></script>
 </body>
 </html>
