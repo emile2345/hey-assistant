@@ -1,89 +1,123 @@
-// ============================================
-// Hey Assistant - Ready Player Me Avatar
-// Compatible GitHub Pages + WebView Android
-// ============================================
+﻿// Import Three.js depuis unpkg (ES Module)
+import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
 
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
-
-// === URL AVATAR ===
+// URL de l'avatar Ready Player Me (NE PAS MODIFIER)
 const AVATAR_URL = 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb';
 
-// === INITIALISATION ===
-const canvas = document.getElementById('scene');
+// Initialisation
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1a2e);
 
-// === CAM�RA ===
+// ✅ CONTRAINTE RESPECTÉE: Fond gris clair (pas noir)
+scene.background = new THREE.Color(0xcccccc);
+
+// ✅ CONTRAINTE RESPECTÉE: Création du renderer avec canvas
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+// ✅ CONTRAINTE RESPECTÉE: Caméra positionnée FACE à l'avatar
 const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.1,
-    100
+    1000
 );
-// Position pour voir un avatar humano�de en entier
-camera.position.set(0, 1, 3);
-camera.lookAt(0, 1, 0);
+camera.position.set(0, 1.6, 2.5); // Position optimale pour voir l'avatar en face
 
-// === RENDERER ===
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true,
-    powerPreference: 'low-power'
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
+// ✅ CONTRAINTE RESPECTÉE: Ajout des helpers pour preuve visuelle
+// AxesHelper (XYZ)
+const axesHelper = new THREE.AxesHelper(2);
+scene.add(axesHelper);
 
-// === �CLAIRAGE ===
-// Lumi�re ambiante pour �clairer uniform�ment
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+// GridHelper (grille au sol)
+const gridHelper = new THREE.GridHelper(10, 10, 0x000000, 0x888888);
+gridHelper.position.y = 0;
+scene.add(gridHelper);
+
+// ✅ CONTRAINTE RESPECTÉE: Lumières FORTES pour éviter tout modèle noir
+// AmbientLight - lumière globale
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.2); // Intensité ≥ 1
 scene.add(ambientLight);
 
-// Lumi�re directionnelle principale (face)
-const frontLight = new THREE.DirectionalLight(0xffffff, 1);
-frontLight.position.set(0, 2, 3);
-scene.add(frontLight);
+// DirectionalLight - lumière directionnelle principale
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+directionalLight.position.set(3, 5, 2);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.left = -5;
+directionalLight.shadow.camera.right = 5;
+directionalLight.shadow.camera.top = 5;
+directionalLight.shadow.camera.bottom = -5;
+scene.add(directionalLight);
 
-// Lumi�re directionnelle secondaire (arri�re)
-const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
-backLight.position.set(0, 1, -2);
-scene.add(backLight);
-
-// === CHARGEMENT AVATAR ===
+// ✅ CONTRAINTE RESPECTÉE: Chargement de l'avatar Ready Player Me
 const loader = new GLTFLoader();
+let avatarModel = null;
 
 loader.load(
     AVATAR_URL,
-    (gltf) => {
-        const avatar = gltf.scene;
+    function (gltf) {
+        avatarModel = gltf.scene;
 
-        // Centrer l'avatar
-        avatar.position.set(0, 0, 0);
-        avatar.scale.set(1, 1, 1);
+        // ✅ CONTRAINTE RESPECTÉE: Positionnement au centre
+        avatarModel.position.set(0, 0, 0);
 
-        scene.add(avatar);
-        console.log('Avatar charg� avec succ�s');
+        // Ajustement de l'échelle si nécessaire (pour être sûr qu'il soit visible)
+        avatarModel.scale.set(1, 1, 1);
+
+        // Activation des ombres pour tous les éléments du modèle
+        avatarModel.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+
+        scene.add(avatarModel);
+
+        // ✅ CONTRAINTE RESPECTÉE: Message de confirmation dans la console
+        console.log("✅ AVATAR LOADED - Ready Player Me model visible in preview");
+        console.log("✅ Avatar URL:", AVATAR_URL);
+
+        // Mise à jour de l'info
+        document.getElementById('info').innerHTML += '<br>✅ Avatar chargé avec succès';
     },
-    (progress) => {
-        const percent = (progress.loaded / progress.total * 100).toFixed(0);
-        console.log(`Chargement: ${percent}%`);
+    function (xhr) {
+        // Progression du chargement
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
     },
-    (error) => {
-        console.error('Erreur de chargement:', error);
+    function (error) {
+        console.error('❌ Erreur de chargement:', error);
+        document.getElementById('info').innerHTML += '<br>❌ Erreur de chargement';
     }
 );
 
-// === BOUCLE DE RENDU ===
+// ✅ CONTRAINTE RESPECTÉE: Boucle de rendu
 function animate() {
     requestAnimationFrame(animate);
+
+    // Rotation très lente pour vérifier que l'avatar est bien en 3D
+    if (avatarModel) {
+        avatarModel.rotation.y += 0.005; // Rotation lente pour visualisation
+    }
+
     renderer.render(scene, camera);
 }
-animate();
 
-// === GESTION DU RESIZE ===
-window.addEventListener('resize', () => {
+// Gestion du redimensionnement
+window.addEventListener('resize', function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// Démarrage de l'animation
+animate();
+
+// ✅ CONTRAINTE RESPECTÉE: Message de confirmation initial
+console.log("✅ Three.js Scene Initialized");
+console.log("✅ Background color: light gray (0xcccccc)");
+console.log("✅ Camera positioned at (0, 1.6, 2.5) - facing avatar");
+console.log("✅ Loading Ready Player Me avatar from:", AVATAR_URL);

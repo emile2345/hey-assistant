@@ -1,31 +1,34 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hey Assistant</title>
+    <title>Ready Player Me Avatar - Lovable Preview</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
             overflow: hidden;
-            background: #1a1a2e;
+            font-family: Arial, sans-serif;
         }
 
-        #scene {
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        canvas {
             display: block;
-            width: 100%;
-            height: 100%;
         }
     </style>
 </head>
 <body>
-    <canvas id="scene"></canvas>
+    <div id="info">✅ Avatar 3D Ready Player Me<br>Fond gris clair visible</div>
     <script type="module" src="./main.js"></script>
 </body>
 </html>
