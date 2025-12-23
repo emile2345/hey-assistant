@@ -1,16 +1,18 @@
-﻿// ✅ CORRECTION: IMPORT ABSOLU avec URL complète
+﻿// Import Three.js et GLTFLoader depuis unpkg
 import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
 
 // ============================================
-// SCÈNE GARANTIE VISIBLE - Modèles simples
+// CHARGEMENT DE AVATAR.GLB LOCAL
 // ============================================
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xcccccc); // Fond gris clair confirmé
+scene.background = new THREE.Color(0xcccccc); // Fond gris clair
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(
@@ -19,203 +21,153 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-camera.position.set(2, 2, 4);
+camera.position.set(0, 1.6, 3);
 
 // ============================================
-// 1. HELPERS VISUELS (toujours visibles)
+// HELPERS VISUELS
 // ============================================
 const axesHelper = new THREE.AxesHelper(2);
 scene.add(axesHelper);
 
-const gridHelper = new THREE.GridHelper(10, 10, 0x000000, 0x888888);
+const gridHelper = new THREE.GridHelper(10, 10, 0x000000, 0x666666);
 gridHelper.position.y = 0;
 scene.add(gridHelper);
 
 // ============================================
-// 2. ÉCLAIRAGE FORT (garanti)
+// ÉCLAIRAGE FORT
 // ============================================
-const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-directionalLight.position.set(5, 10, 7);
-directionalLight.castShadow = true;
-scene.add(directionalLight);
+const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+directionalLight1.position.set(5, 8, 5);
+directionalLight1.castShadow = true;
+scene.add(directionalLight1);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
-pointLight.position.set(-5, 5, 5);
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
+directionalLight2.position.set(-5, 3, -5);
+scene.add(directionalLight2);
+
+const pointLight = new THREE.PointLight(0xffffff, 0.6);
+pointLight.position.set(0, 4, 0);
 scene.add(pointLight);
 
 // ============================================
-// 3. AVATAR SIMPLE GARANTI VISIBLE
+// FONCTIONS DE CHARGEMENT
 // ============================================
+function updateStatus(message) {
+    document.getElementById('status').textContent = message;
+    console.log(message);
+}
 
-// Option A: Avatar humain simple avec primitives Three.js
-function createSimpleHumanAvatar() {
+function showLoading(show) {
+    document.getElementById('loading').style.display = show ? 'block' : 'none';
+}
+
+// Fonction pour créer un avatar de secours si le GLB échoue
+function createFallbackAvatar() {
+    updateStatus("⚠️ Création d'un avatar de secours...");
+
     const group = new THREE.Group();
 
-    // Tête (sphère)
-    const headGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-    const headMaterial = new THREE.MeshStandardMaterial({
-        color: 0xFFCC99,
-        roughness: 0.3
+    // Corps simple
+    const geometry = new THREE.BoxGeometry(0.5, 1.5, 0.3);
+    const material = new THREE.MeshStandardMaterial({
+        color: 0x4CAF50,
+        metalness: 0.3,
+        roughness: 0.4
     });
+    const body = new THREE.Mesh(geometry, material);
+    body.position.y = 0.75;
+    group.add(body);
+
+    // Tête
+    const headGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const headMaterial = new THREE.MeshStandardMaterial({ color: 0xFFCC99 });
     const head = new THREE.Mesh(headGeometry, headMaterial);
     head.position.y = 1.6;
     group.add(head);
 
-    // Corps (cylindre)
-    const bodyGeometry = new THREE.CylinderGeometry(0.15, 0.3, 0.8, 8);
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-        color: 0x2196F3,
-        metalness: 0.2
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.position.y = 0.9;
-    group.add(body);
-
-    // Bras gauche
-    const leftArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.6, 8);
-    const armMaterial = new THREE.MeshStandardMaterial({
-        color: 0x4CAF50,
-        metalness: 0.2
-    });
-    const leftArm = new THREE.Mesh(leftArmGeometry, armMaterial);
-    leftArm.position.set(-0.25, 1.1, 0);
-    leftArm.rotation.z = Math.PI / 4;
-    group.add(leftArm);
-
-    // Bras droit
-    const rightArm = leftArm.clone();
-    rightArm.position.set(0.25, 1.1, 0);
-    rightArm.rotation.z = -Math.PI / 4;
-    group.add(rightArm);
-
-    // Jambe gauche
-    const leftLegGeometry = new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8);
-    const legMaterial = new THREE.MeshStandardMaterial({
-        color: 0x795548,
-        metalness: 0.2
-    });
-    const leftLeg = new THREE.Mesh(leftLegGeometry, legMaterial);
-    leftLeg.position.set(-0.1, 0.25, 0);
-    group.add(leftLeg);
-
-    // Jambe droite
-    const rightLeg = leftLeg.clone();
-    rightLeg.position.set(0.1, 0.25, 0);
-    group.add(rightLeg);
-
-    // Yeux
-    const eyeGeometry = new THREE.SphereGeometry(0.03, 8, 8);
-    const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(-0.06, 1.65, 0.15);
-    group.add(leftEye);
-
-    const rightEye = leftEye.clone();
-    rightEye.position.set(0.06, 1.65, 0.15);
-    group.add(rightEye);
-
-    // Bouche
-    const mouthGeometry = new THREE.TorusGeometry(0.04, 0.01, 4, 8, Math.PI);
-    const mouthMaterial = new THREE.MeshStandardMaterial({ color: 0xFF5252 });
-    const mouth = new THREE.Mesh(mouthGeometry, mouthMaterial);
-    mouth.position.set(0, 1.55, 0.15);
-    mouth.rotation.x = Math.PI / 2;
-    group.add(mouth);
-
-    return group;
-}
-
-// Option B: Robot simple alternatif
-function createSimpleRobot() {
-    const group = new THREE.Group();
-
-    // Corps principal (cube)
-    const bodyGeometry = new THREE.BoxGeometry(0.5, 0.8, 0.3);
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-        color: 0x607D8B,
-        metalness: 0.8,
-        roughness: 0.2
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.position.y = 0.8;
-    group.add(body);
-
-    // Tête (cube plus petit)
-    const headGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-    const headMaterial = new THREE.MeshStandardMaterial({
-        color: 0x455A64,
-        metalness: 0.9
-    });
-    const head = new THREE.Mesh(headGeometry, headMaterial);
-    head.position.y = 1.35;
-    group.add(head);
-
-    // Yeux (LEDs)
-    const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-    const eyeMaterial = new THREE.MeshStandardMaterial({
-        color: 0x00E5FF,
-        emissive: 0x00B0FF,
-        emissiveIntensity: 0.5
-    });
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(-0.08, 1.4, 0.16);
-    group.add(leftEye);
-
-    const rightEye = leftEye.clone();
-    rightEye.position.set(0.08, 1.4, 0.16);
-    group.add(rightEye);
-
-    // Bras
-    const armGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.6, 8);
-    const armMaterial = new THREE.MeshStandardMaterial({
-        color: 0x37474F,
-        metalness: 0.7
-    });
-
-    const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-    leftArm.position.set(-0.35, 0.9, 0);
-    leftArm.rotation.z = Math.PI / 6;
-    group.add(leftArm);
-
-    const rightArm = leftArm.clone();
-    rightArm.position.set(0.35, 0.9, 0);
-    rightArm.rotation.z = -Math.PI / 6;
-    group.add(rightArm);
-
-    // Jambes
-    const legGeometry = new THREE.CylinderGeometry(0.06, 0.06, 0.7, 8);
-    const legMaterial = new THREE.MeshStandardMaterial({
-        color: 0x263238,
-        metalness: 0.7
-    });
-
-    const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-    leftLeg.position.set(-0.12, 0.15, 0);
-    group.add(leftLeg);
-
-    const rightLeg = leftLeg.clone();
-    rightLeg.position.set(0.12, 0.15, 0);
-    group.add(rightLeg);
-
     return group;
 }
 
 // ============================================
-// AJOUT DE L'AVATAR CHOISI À LA SCÈNE
+// CHARGEMENT DU FICHIER AVATAR.GLB LOCAL
 // ============================================
-console.log("🎯 Création de l'avatar 3D garantie visible...");
+const loader = new GLTFLoader();
+let avatar = null;
 
-// Créer l'avatar (choisissez celui que vous préférez)
-const avatar = createSimpleHumanAvatar(); // Avatar humain simple
-// const avatar = createSimpleRobot();     // Avatar robot (décommentez pour utiliser)
+// URL relative vers avatar.glb dans le même dossier
+const AVATAR_PATH = './avatar.glb';
 
-scene.add(avatar);
+updateStatus("🔄 Début du chargement de avatar.glb...");
+showLoading(true);
 
-// Positionner l'avatar au centre
-avatar.position.set(0, 0, 0);
+loader.load(
+    AVATAR_PATH,
+
+    // Succès
+    function (gltf) {
+        console.log("✅ avatar.glb chargé avec succès!");
+        updateStatus("✅ avatar.glb chargé avec succès!");
+        showLoading(false);
+
+        avatar = gltf.scene;
+
+        // Ajuster l'échelle si nécessaire
+        avatar.scale.set(1, 1, 1);
+        avatar.position.set(0, 0, 0);
+
+        // Calculer la boîte englobante pour centrer et ajuster la caméra
+        const box = new THREE.Box3().setFromObject(avatar);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+
+        console.log("Taille du modèle:", size);
+        console.log("Centre du modèle:", center);
+
+        // Centrer le modèle
+        avatar.position.x -= center.x;
+        avatar.position.y -= center.y;
+        avatar.position.z -= center.z;
+
+        // Activer les ombres
+        avatar.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+
+        scene.add(avatar);
+
+        // Ajuster la caméra selon la taille du modèle
+        const maxDim = Math.max(size.x, size.y, size.z);
+        camera.position.set(0, maxDim * 0.8, maxDim * 1.5);
+        camera.lookAt(0, maxDim * 0.5, 0);
+
+        updateStatus(`✅ Avatar chargé - Taille: ${size.x.toFixed(2)}x${size.y.toFixed(2)}x${size.z.toFixed(2)}`);
+    },
+
+    // Progression
+    function (xhr) {
+        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+        updateStatus(`🔄 Chargement: ${percent}%`);
+        console.log(`Chargement: ${percent}%`);
+    },
+
+    // Erreur
+    function (error) {
+        console.error("❌ Erreur de chargement de avatar.glb:", error);
+        updateStatus("❌ Erreur de chargement, création d'un avatar de secours...");
+        showLoading(false);
+
+        // Créer un avatar de secours
+        avatar = createFallbackAvatar();
+        scene.add(avatar);
+        updateStatus("✅ Avatar de secours créé");
+    }
+);
 
 // ============================================
 // ANIMATION
@@ -223,22 +175,9 @@ avatar.position.set(0, 0, 0);
 function animate() {
     requestAnimationFrame(animate);
 
-    // Rotation lente de l'avatar
-    avatar.rotation.y += 0.01;
-
-    // Petite animation des bras
-    if (avatar.children) {
-        // Recherche des bras dans l'avatar humain
-        avatar.children.forEach(child => {
-            if (child.geometry && child.geometry.type === 'CylinderGeometry') {
-                // Animation subtile des bras
-                if (child.position.x < 0) { // Bras gauche
-                    child.rotation.z = Math.PI / 4 + Math.sin(Date.now() * 0.003) * 0.2;
-                } else if (child.position.x > 0) { // Bras droit
-                    child.rotation.z = -Math.PI / 4 + Math.sin(Date.now() * 0.003) * 0.2;
-                }
-            }
-        });
+    // Si l'avatar est chargé, le faire tourner lentement
+    if (avatar) {
+        avatar.rotation.y += 0.01;
     }
 
     renderer.render(scene, camera);
@@ -247,7 +186,7 @@ function animate() {
 // ============================================
 // GESTION DU REDIMENSIONNEMENT
 // ============================================
-window.addEventListener('resize', () => {
+window.addEventListener('resize', function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -258,8 +197,6 @@ window.addEventListener('resize', () => {
 // ============================================
 animate();
 
-console.log("✅ Avatar 3D créé avec succès!");
-console.log("✅ Le modèle est visible dans l'aperçu");
-console.log("✅ Fond gris clair confirmé");
-console.log("✅ Éclairage fort appliqué");
-console.log("✅ Animation active");
+console.log("🚀 Démarrage du chargement de avatar.glb");
+console.log("📁 Chemin du fichier:", AVATAR_PATH);
+console.log("💡 Assurez-vous que avatar.glb est dans le même dossier que index.html");

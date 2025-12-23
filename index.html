@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatar 3D Garanti - Lovable Preview</title>
+    <title>Avatar Local GLB - Lovable Preview</title>
     <style>
         body {
             margin: 0;
@@ -25,6 +25,18 @@
             border: 2px solid #4CAF50;
         }
 
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+        }
+
         canvas {
             display: block;
         }
@@ -32,9 +44,12 @@
 </head>
 <body>
     <div id="info">
-        <strong style="color: #4CAF50;">✅ Avatar 3D VISIBLE</strong><br>
-        Fond gris clair confirmé<br>
-        Le modèle est garanti visible
+        <strong style="color: #4CAF50;">✅ Chargement avatar.glb local</strong><br>
+        <span id="status">Prêt à charger avatar.glb...</span>
+    </div>
+
+    <div id="loading">
+        Chargement de avatar.glb...
     </div>
 
     <script type="module" src="./main.js"></script>
