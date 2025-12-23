@@ -1,4 +1,5 @@
-﻿import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+﻿// ✅ CORRECTION: IMPORT ABSOLU avec URL complète
+import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
 
 // ============================================
 // SCÈNE GARANTIE VISIBLE - Modèles simples
