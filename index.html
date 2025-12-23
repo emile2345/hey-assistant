@@ -9,7 +9,6 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: Arial, sans-serif;
             background: #cccccc;
         }
 
@@ -25,18 +24,6 @@
             border: 2px solid #4CAF50;
         }
 
-        #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            display: none;
-        }
-
         canvas {
             display: block;
         }
@@ -45,13 +32,8 @@
 <body>
     <div id="info">
         <strong style="color: #4CAF50;">✅ Chargement avatar.glb local</strong><br>
-        <span id="status">Prêt à charger avatar.glb...</span>
+        <span id="status">Prêt à charger...</span>
     </div>
-
-    <div id="loading">
-        Chargement de avatar.glb...
-    </div>
-
     <script type="module" src="./main.js"></script>
 </body>
 </html>
